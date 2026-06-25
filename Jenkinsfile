@@ -1,23 +1,43 @@
 pipeline {
-  agent any
-  stages {
-    stage('install deps') { 
-        steps{
-            sh 'npm install'
+    agent any 
+
+    stages {
+        stage('install deps') {
+            agent { docker { image 'node:lts-alpine3.24' } }  // 2. Docker scoped to stage only
+            steps {
+                sh 'npm install'
+            }
         }
-         }
-    stage('Execute') {
-      agent { docker { image 'node:lts-alpine3.24' } }
-      steps {
-        sh 'npx newman run collection.json -e env.json --reporters cli,allure --reporter-allure-export allure-results'
-        stash includes: 'allure-results/**', name: 'allure-results'
-      }
+
+        stage('clean allure results') {
+            steps {
+                sh '''
+                    echo "Suppression du cache Allure..."
+                    rm -rf allure-results
+                    mkdir -p allure-results
+                    echo "Dossier allure-results nettoyé avec succès"
+                '''
+            }
+        }
+
+        stage('Execute') {
+            agent { docker { image 'node:lts-alpine3.24' } }
+            steps {
+                sh 'npx newman run collection.json -e env.json --reporters cli,allure --reporter-allure-export allure-results'
+                stash name: 'allure-results', includes: 'allure-results/**'
+            }
+        }
     }
-  }
-  post {
-    always {
-      unstash 'allure-results'
-      allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
+
+    post {
+        always {
+            script {
+                unstash 'allure-results'
+                archiveArtifacts artifacts: 'allure-results/**'
+                allure includeProperties: false,
+                       jdk: '',
+                       results: [[path: 'allure-results']]
+            }
+        }
     }
-  }
 }
