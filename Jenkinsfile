@@ -6,7 +6,7 @@ pipeline {
     stages{
                 stage('install deps'){
                     steps{
-                        sh 'npm ci'
+                        // sh 'npm ci'
                         sh 'npm install allure'
                     }
                 }
