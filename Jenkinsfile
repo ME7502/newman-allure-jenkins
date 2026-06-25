@@ -6,8 +6,8 @@ pipeline {
     stages{
                 stage('install deps'){
                     steps{
-                        // sh 'npm ci'
-                        sh 'npm install allure'
+                        sh 'npm install'
+                        // sh 'npm install allure newman-reporter-allure'
                     }
                 }
 
@@ -26,7 +26,7 @@ pipeline {
                 stage('Execute'){
                     steps{
                         sh" npx newman run collection.json  -e env.json  --reporters cli,allure  --reporter-allure-export output/allure-results"
-                        stash name: 'allure-results', includes: 'allure-results/*'
+                        stash name: 'allure-results', includes: 'output/allure-results/*'
                     }
                     }
     }

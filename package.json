@@ -1,5 +1,5 @@
 {
-  "devDependencies": {
+  "dependencies": {
     "newman": "^6.2.2",
     "newman-reporter-allure": "^3.10.1"
   }
