@@ -2,7 +2,9 @@ pipeline {
   agent any
   stages {
     stage('install deps') { 
-        sh 'npm install'
+        steps{
+            sh 'npm install'
+        }
          }
     stage('Execute') {
       agent { docker { image 'node:lts-alpine3.24' } }
