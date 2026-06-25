@@ -24,8 +24,10 @@ pipeline {
                 }
 
                 stage('Execute'){
-                    sh" npx newman run collection.json  -e env.json  --reporters cli,allure  --reporter-allure-export output/allure-results"
-                    stash name: 'allure-results', includes: 'allure-results/*'
+                    steps{
+                        sh" npx newman run collection.json  -e env.json  --reporters cli,allure  --reporter-allure-export output/allure-results"
+                        stash name: 'allure-results', includes: 'allure-results/*'
+                    }
                     }
     }
 
