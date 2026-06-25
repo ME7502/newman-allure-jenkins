@@ -2,12 +2,6 @@ pipeline {
     agent any 
 
     stages {
-        stage('install deps') {
-            agent { docker { image 'node:lts-alpine3.24' } }  // 2. Docker scoped to stage only
-            steps {
-                sh 'npm install'
-            }
-        }
 
         stage('clean allure results') {
             steps {
@@ -20,9 +14,10 @@ pipeline {
             }
         }
 
-        stage('Execute') {
-            agent { docker { image 'node:lts-alpine3.24' } }
+        stage('install deps') {
+            agent { docker { image 'node:lts-alpine3.24' } }  // 2. Docker scoped to stage only
             steps {
+                sh 'npm install'
                 sh 'npx newman run collection.json -e env.json --reporters cli,allure --reporter-allure-export allure-results'
                 stash name: 'allure-results', includes: 'allure-results/**'
             }
