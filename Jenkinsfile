@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        docker{image 'postman/newman:latest'}
+        docker{image 'node:lts-alpine3.24'}
     }
 
     stages{
